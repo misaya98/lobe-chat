@@ -3,8 +3,6 @@
 import { memo } from 'react';
 import { Flexbox } from 'react-layout-kit';
 
-import { useAiInfraStore } from '@/store/aiInfra';
-
 import ModelList from '../../features/ModelList';
 import ProviderConfig, { ProviderConfigProps } from '../../features/ProviderConfig';
 
@@ -12,9 +10,6 @@ interface ProviderDetailProps extends ProviderConfigProps {
   showConfig?: boolean;
 }
 const ProviderDetail = memo<ProviderDetailProps>(({ showConfig = true, ...card }) => {
-  const useFetchAiProviderItem = useAiInfraStore((s) => s.useFetchAiProviderItem);
-  useFetchAiProviderItem(card.id);
-
   return (
     <Flexbox gap={24} paddingBlock={8}>
       {/* ↓ cloud slot ↓ */}
