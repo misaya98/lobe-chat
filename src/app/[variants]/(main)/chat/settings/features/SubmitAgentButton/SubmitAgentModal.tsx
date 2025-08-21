@@ -44,7 +44,6 @@ const SubmitAgentModal = memo<ModalProps>(({ open, onCancel }) => {
   const knowledgeBases = useAgentStore(agentSelectors.currentAgentKnowledgeBases);
   const files = useAgentStore(agentSelectors.currentAgentFiles);
 
-
   const handleSubmit = async (values: FormValues) => {
     if (!isAuthenticated || !marketSession?.accessToken) {
       message.error('请先登录市场账户');
@@ -78,7 +77,6 @@ const SubmitAgentModal = memo<ModalProps>(({ open, onCancel }) => {
         category: meta?.tags?.[0] || 'general',
         changelog: '首次发布',
         config: {
-
           // Chat configuration
           chatConfig: {
             displayMode: chatConfig?.displayMode,
@@ -89,23 +87,25 @@ const SubmitAgentModal = memo<ModalProps>(({ open, onCancel }) => {
             temperature: agentConfig?.params?.temperature,
             topP: agentConfig?.params?.top_p,
           },
-          
+
           description: meta?.description,
 
           // Files
-          files: files?.map((file) => ({
-            enabled: file.enabled,
-            id: file.id,
-            name: file.name,
-            type: file.type,
-          })) || [],
+          files:
+            files?.map((file) => ({
+              enabled: file.enabled,
+              id: file.id,
+              name: file.name,
+              type: file.type,
+            })) || [],
 
           // Knowledge bases
-          knowledgeBases: knowledgeBases?.map((kb) => ({
-            enabled: kb.enabled,
-            id: kb.id,
-            name: kb.name,
-          })) || [],
+          knowledgeBases:
+            knowledgeBases?.map((kb) => ({
+              enabled: kb.enabled,
+              id: kb.id,
+              name: kb.name,
+            })) || [],
 
           // Language
           locale: language,
@@ -118,11 +118,12 @@ const SubmitAgentModal = memo<ModalProps>(({ open, onCancel }) => {
           },
 
           // Plugins
-          plugins: plugins?.map((plugin) => ({
-            enabled: true,
-            identifier: plugin,
-            settings: {},
-          })) || [],
+          plugins:
+            plugins?.map((plugin) => ({
+              enabled: true,
+              identifier: plugin,
+              settings: {},
+            })) || [],
 
           // System role and description
           systemRole: systemRole || '你是一个有用的助手。',
@@ -145,13 +146,14 @@ const SubmitAgentModal = memo<ModalProps>(({ open, onCancel }) => {
       console.log('Version created:', versionResult);
 
       // Step 3: Update session meta with market identifier
-      updateSessionMeta({
+      console.log('🔸 [Modal] Calling updateSessionMeta with marketIdentifier:', values.identifier);
+      await updateSessionMeta({
         marketIdentifier: values.identifier,
       });
+      console.log('🔸 [Modal] updateSessionMeta completed');
 
       message.success({ content: '助手发布成功！', key: 'submit' });
       return true; // 返回 true 表示提交成功，会自动关闭 Modal
-
     } catch (error) {
       console.error('Submit agent failed:', error);
       const errorMessage = error instanceof Error ? error.message : '发布失败';

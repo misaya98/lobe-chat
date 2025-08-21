@@ -407,22 +407,46 @@ export class SessionModel {
   };
 
   updateConfig = async (sessionId: string, data: PartialDeep<AgentItem> | undefined | null) => {
-    if (!data || Object.keys(data).length === 0) return;
+    console.log('🔸 [Model] updateConfig called with:', { data, sessionId });
+
+    if (!data || Object.keys(data).length === 0) {
+      console.log('❌ [Model] No data provided or empty data');
+      return;
+    }
 
     const session = await this.findByIdOrSlug(sessionId);
-    if (!session) return;
+    if (!session) {
+      console.log('❌ [Model] Session not found:', sessionId);
+      return;
+    }
 
     if (!session.agent) {
+      console.log('❌ [Model] Agent not found for session:', sessionId);
       throw new Error(
         'this session is not assign with agent, please contact with admin to fix this issue.',
       );
     }
 
+    console.log('🔸 [Model] Current agent data:', session.agent);
+    console.log('🔸 [Model] Data to merge:', data);
+
     const mergedValue = merge(session.agent, data);
-    return this.db
+    console.log('🔸 [Model] Merged value:', mergedValue);
+
+    console.log(
+      '🔸 [Model] Updating agents table where agentId =',
+      session.agent.id,
+      'userId =',
+      this.userId,
+    );
+    const result = await this.db
       .update(agents)
       .set(mergedValue)
-      .where(and(eq(agents.id, session.agent.id), eq(agents.userId, this.userId)));
+      .where(and(eq(agents.id, session.agent.id), eq(agents.userId, this.userId)))
+      .returning();
+
+    console.log('🔸 [Model] Update result:', result);
+    return result;
   };
 
   // **************** Helper *************** //

@@ -110,12 +110,26 @@ export class ClientService extends BaseClientService implements ISessionService 
   };
 
   updateSessionMeta: ISessionService['updateSessionMeta'] = async (activeId, meta) => {
+    console.log('🔹 [Service] updateSessionMeta called with:', { activeId, meta });
+
     // inbox 不允许修改 meta
-    if (activeId === INBOX_SESSION_ID) return;
+    if (activeId === INBOX_SESSION_ID) {
+      console.log('❌ [Service] Cannot update inbox session meta');
+      return;
+    }
 
     // meta 数据存储在 agents 表中，需要更新对应的 agent
+    console.log('🔹 [Service] Finding session by ID:', activeId);
     const session = await this.sessionModel.findByIdOrSlug(activeId);
-    if (!session?.agent) return;
+    if (!session?.agent) {
+      console.log('❌ [Service] Session or agent not found:', { agent: session?.agent, session });
+      return;
+    }
+
+    console.log('🔹 [Service] Found session with agent:', {
+      agentId: session.agent.id,
+      sessionId: session.id,
+    });
 
     // 提取需要存储到 agent 表的字段
     const agentMeta = {
@@ -127,7 +141,11 @@ export class ClientService extends BaseClientService implements ISessionService 
       title: meta.title,
     };
 
-    return this.sessionModel.updateConfig(activeId, agentMeta);
+    console.log('🔹 [Service] Updating agent config with:', agentMeta);
+    const result = await this.sessionModel.updateConfig(activeId, agentMeta);
+    console.log('🔹 [Service] Update completed with result:', result);
+
+    return result;
   };
 
   updateSessionChatConfig: ISessionService['updateSessionChatConfig'] = async (
