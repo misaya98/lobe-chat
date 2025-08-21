@@ -57,7 +57,7 @@ export interface SessionAction {
   duplicateSession: (id: string) => Promise<void>;
   triggerSessionUpdate: (id: string) => Promise<void>;
   updateSessionGroupId: (sessionId: string, groupId: string) => Promise<void>;
-  updateSessionMeta: (meta: Partial<MetaData>) => void;
+  updateSessionMeta: (meta: Partial<MetaData>) => Promise<void>;
 
   /**
    * Pins or unpins a session.
@@ -212,18 +212,26 @@ export const createSessionSlice: StateCreator<
   },
 
   updateSessionMeta: async (meta) => {
-    const session = sessionSelectors.currentSession(get());
-    if (!session) return;
+    console.log('🔸 [Store] updateSessionMeta called with:', meta);
 
     const { activeId, refreshSessions } = get();
+    console.log('🔸 [Store] Current activeId:', activeId);
+
+    if (!activeId) {
+      console.log('❌ [Store] No activeId found');
+      return;
+    }
 
     const abortController = get().signalSessionMeta as AbortController;
     if (abortController) abortController.abort(MESSAGE_CANCEL_FLAT);
     const controller = new AbortController();
     set({ signalSessionMeta: controller }, false, 'updateSessionMetaSignal');
 
+    console.log('🔸 [Store] Calling sessionService.updateSessionMeta...');
     await sessionService.updateSessionMeta(activeId, meta, controller.signal);
+    console.log('🔸 [Store] sessionService.updateSessionMeta completed, refreshing sessions...');
     await refreshSessions();
+    console.log('🔸 [Store] Sessions refreshed');
   },
 
   useFetchSessions: (enabled, isLogin) =>
