@@ -1,10 +1,10 @@
 import { ModelProvider } from '@lobechat/model-runtime';
 import { EvalEvaluationStatus } from '@lobechat/types';
+import { chainAnswerWithContext } from '@lobechat/prompts';
 import { TRPCError } from '@trpc/server';
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-import { chainAnswerWithContext } from '@/chains/answerWithContext';
 import { DEFAULT_EMBEDDING_MODEL, DEFAULT_MODEL } from '@/const/settings';
 import { ChunkModel } from '@/database/models/chunk';
 import { EmbeddingModel } from '@/database/models/embedding';
