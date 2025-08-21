@@ -1,26 +1,13 @@
-'use client';
+import { PagePropsWithId } from '@/types/next';
 
-import { useParams } from 'next/navigation';
+import PageContent from './PageContent';
 
-import { DEFAULT_MODEL_PROVIDER_LIST } from '@/config/modelProviders';
-import { useAiInfraStore } from '@/store/aiInfra';
+const Page = async (props: PagePropsWithId) => {
+  const params = await props.params;
 
-import ClientMode from './ClientMode';
-import ProviderDetail from './index';
-
-const Page = () => {
-  const params = useParams();
-  const id = params.id as string;
-
-  // 统一在这里获取数据
-  const useFetchAiProviderItem = useAiInfraStore((s) => s.useFetchAiProviderItem);
-  useFetchAiProviderItem(id);
-
-  const builtinProviderCard = DEFAULT_MODEL_PROVIDER_LIST.find((v) => v.id === id);
-  // if builtin provider
-  if (!!builtinProviderCard) return <ProviderDetail source={'builtin'} {...builtinProviderCard} />;
-
-  return <ClientMode id={id} />;
+  return <PageContent id={params.id} />;
 };
 
 export default Page;
+
+export const dynamic = 'force-static';
