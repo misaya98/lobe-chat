@@ -1,0 +1,20 @@
+# 忽略 Git 历史记录
+.git/
+
+# 忽略整个桌面端应用 (这是体积大户)
+apps/desktop/
+
+# 忽略文档 (线上运行不需要)
+docs/
+
+# 忽略 GitHub Actions 工作流
+.github/
+
+# 忽略构建脚本 (运行时不需要)
+scripts/
+
+# 忽略其他开发相关文件
+.husky/
+.vscode/
+.npmrc
+.nvmrc
