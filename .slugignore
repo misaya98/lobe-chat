@@ -10,8 +10,6 @@ docs/
 # 忽略 GitHub Actions 工作流
 .github/
 
-# 忽略构建脚本 (运行时不需要)
-scripts/
 
 # 忽略其他开发相关文件
 .husky/
